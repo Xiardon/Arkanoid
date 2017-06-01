@@ -103,7 +103,6 @@ public class ExperimentoBola extends Application
 
                 }));
         tm.setCycleCount(Timeline.INDEFINITE);
-
         tm.playFromStart();
 
         Button bt = new Button("Reset");
