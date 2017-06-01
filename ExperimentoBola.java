@@ -123,6 +123,7 @@ public class ExperimentoBola extends Application
                 Rectangle ladrillo1 = ladrillos.get(i);
                 if(ladrillo.getBoundsInParent().intersects(ladrillo1.getBoundsInParent())){
                     ladrillo1.setVisible(false);
+                    
                 }
                 i++;
             }
