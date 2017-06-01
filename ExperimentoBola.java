@@ -42,12 +42,12 @@ public class ExperimentoBola extends Application
 
         circulo.setFill(Color.RED);  
         circulo.setRadius(20);
-        circulo.setCenterX(new Random().nextDouble() + 20);
-        circulo.setCenterY(250 - 20);
+        circulo.setCenterX(new Random().nextInt(500 - 40));
+        circulo.setCenterY(100);
 
         rectangulo.setFill(Color.BLUE);
         rectangulo.setX(250);
-        rectangulo.setY(450);
+        rectangulo.setY(490);
         rectangulo.setHeight(10);
         rectangulo.setWidth(70);
 
@@ -76,7 +76,7 @@ public class ExperimentoBola extends Application
         tm = new Timeline(new KeyFrame(Duration.millis(10), event->{
                     long segundos = tiempoEnSegundos % 60;
                     long minutos = tiempoEnSegundos / 60;
-                    contador.setText(minutos + ":" + segundos + "Tiempo");
+                    contador.setText(minutos + ":" + segundos + " Tiempo");
                     circulo.setTranslateX(circulo.getTranslateX() + velocidadCirculoX);
                     circulo.setTranslateY(circulo.getTranslateY() + velocidadCirculoY);
                     xMin = circulo.getBoundsInParent().getMinX();
@@ -105,6 +105,31 @@ public class ExperimentoBola extends Application
         tm.setCycleCount(Timeline.INDEFINITE);
         tm.playFromStart();
 
+        ArrayList<Rectangle> ladrillos = new ArrayList<>();
+        for(int i = 0; i < 5000; i++){
+            Rectangle ladrillo =  new Rectangle();
+            ladrillo.setFill(Color.BLACK);
+            ladrillo.setWidth(50);
+            ladrillo.setHeight(30);
+            ladrillo.setTranslateX(new Random().nextInt(500 - 50));
+            ladrillo.setTranslateY(new Random().nextInt(250 - 10));
+            ladrillos.add(ladrillo);
+        }
+        int x = 0;
+        while(x < ladrillos.size()){
+            Rectangle ladrillo =  ladrillos.get(x);
+            int i = x + 1;
+            while(i < ladrillos.size()){
+                Rectangle ladrillo1 = ladrillos.get(i);
+                if(ladrillo.getBoundsInParent().intersects(ladrillo1.getBoundsInParent())){
+                    ladrillo1.setVisible(false);
+                }
+                i++;
+            }
+            x ++;
+        }
+        contenedor.getChildren().addAll(ladrillos);
+
         Button bt = new Button("Reset");
         bt.setOnAction(event -> {
                 tm.stop();
@@ -122,6 +147,7 @@ public class ExperimentoBola extends Application
                 }
             });
         escenario.setScene(escena);
+        escenario.setTitle("ARKANOID");
         escenario.show();
 
     }

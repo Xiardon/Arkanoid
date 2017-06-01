@@ -13,10 +13,7 @@ import javafx.scene.control.Label;
 import javafx.animation.Animation;
 import java.util.Random;
 import javafx.scene.input.KeyCode;
-import java.util.Timer;
-import java.util.TimerTask;
-
-
+import java.util.*;
 
 public class BolaClase extends Application
 {
@@ -58,7 +55,7 @@ public class BolaClase extends Application
         circulo.setCenterX(20 + aleatorio.nextInt(500 - 40));
         circulo.setCenterY(50);
         contenedor.getChildren().add(circulo);
-        
+
         Label tiempoPasado = new Label("0");
         contenedor.getChildren().add(tiempoPasado);
 
@@ -69,57 +66,71 @@ public class BolaClase extends Application
         Timeline timeline = new Timeline();
         KeyFrame keyframe = new KeyFrame(Duration.seconds(0.01), event -> {
 
-                        // Controlamos si la bola rebota a ziquierda o derecha
-                        if (circulo.getBoundsInParent().getMinX() <= 0 ||
-                        circulo.getBoundsInParent().getMaxX() >= escena.getWidth()) {
-                            velocidadEnX = -velocidadEnX;                              
-                        }
+                    // Controlamos si la bola rebota a ziquierda o derecha
+                    if (circulo.getBoundsInParent().getMinX() <= 0 ||
+                    circulo.getBoundsInParent().getMaxX() >= escena.getWidth()) {
+                        velocidadEnX = -velocidadEnX;                              
+                    }
 
-                        // Conrolamos si la bola rebota arriba y abajo
-                        if (circulo.getBoundsInParent().getMinY() <= 0) {
+                    // Conrolamos si la bola rebota arriba y abajo
+                    if (circulo.getBoundsInParent().getMinY() <= 0) {
+                        velocidadEnY = -velocidadEnY;
+                    }
+
+                    if (circulo.getBoundsInParent().getMaxY() == plataforma.getBoundsInParent().getMinY()) {
+                        double centroEnXDeLaBola = circulo.getBoundsInParent().getMinX() + RADIO;
+                        double minEnXDeLaPlataforma = plataforma.getBoundsInParent().getMinX();
+                        double maxEnXDeLaPlataforma = plataforma.getBoundsInParent().getMaxX();
+                        if ((centroEnXDeLaBola >= minEnXDeLaPlataforma) &&
+                        (centroEnXDeLaBola <= maxEnXDeLaPlataforma)) {
+                            //La bola esta sobre la plataforma
                             velocidadEnY = -velocidadEnY;
                         }
+                    }
 
-                        if (circulo.getBoundsInParent().getMaxY() == plataforma.getBoundsInParent().getMinY()) {
-                            double centroEnXDeLaBola = circulo.getBoundsInParent().getMinX() + RADIO;
-                            double minEnXDeLaPlataforma = plataforma.getBoundsInParent().getMinX();
-                            double maxEnXDeLaPlataforma = plataforma.getBoundsInParent().getMaxX();
-                            if ((centroEnXDeLaBola >= minEnXDeLaPlataforma) &&
-                            (centroEnXDeLaBola <= maxEnXDeLaPlataforma)) {
-                                //La bola esta sobre la plataforma
-                                velocidadEnY = -velocidadEnY;
-                            }
-                        }
+                    circulo.setTranslateX(circulo.getTranslateX() + velocidadEnX);
+                    circulo.setTranslateY(circulo.getTranslateY() + velocidadEnY);
 
-                        circulo.setTranslateX(circulo.getTranslateX() + velocidadEnX);
-                        circulo.setTranslateY(circulo.getTranslateY() + velocidadEnY);
+                    plataforma.setTranslateX(plataforma.getTranslateX() + velocidadPlataforma);
+                    if (plataforma.getBoundsInParent().getMinX() == 0  || 
+                    plataforma.getBoundsInParent().getMaxX() == escena.getWidth()) {
+                        velocidadPlataforma = 0;
+                    }
 
-                        plataforma.setTranslateX(plataforma.getTranslateX() + velocidadPlataforma);
-                        if (plataforma.getBoundsInParent().getMinX() == 0  || 
-                        plataforma.getBoundsInParent().getMaxX() == escena.getWidth()) {
-                            velocidadPlataforma = 0;
-                        }
-                        
-                        // Actualizamos la etiqueta del tiempo
-                        int minutos = tiempoEnSegundos / 60;
-                        int segundos = tiempoEnSegundos % 60;
-                        tiempoPasado.setText(minutos + ":" + segundos);                        
+                    // Actualizamos la etiqueta del tiempo
+                    int minutos = tiempoEnSegundos / 60;
+                    int segundos = tiempoEnSegundos % 60;
+                    tiempoPasado.setText(minutos + ":" + segundos);                        
 
-                        // Comrpobamos si el juego debe detenerse
-                        if (circulo.getBoundsInParent().getMinY() > escena.getHeight()) {
-                            Label mensajeGameOver = new Label("Game over");
-                            mensajeGameOver.setTranslateX(escena.getWidth() / 2);
-                            mensajeGameOver.setTranslateY(escena.getHeight() / 2);
-                            contenedor.getChildren().add(mensajeGameOver);
-                            timeline.stop();
-                        }
-                        
-                    });  
+                    // Comrpobamos si el juego debe detenerse
+                    if (circulo.getBoundsInParent().getMinY() > escena.getHeight()) {
+                        Label mensajeGameOver = new Label("Game over");
+                        mensajeGameOver.setTranslateX(escena.getWidth() / 2);
+                        mensajeGameOver.setTranslateY(escena.getHeight() / 2);
+                        contenedor.getChildren().add(mensajeGameOver);
+                        timeline.stop();
+                    }
+
+                });  
         timeline.getKeyFrames().add(keyframe);
 
         timeline.setCycleCount(Timeline.INDEFINITE);
-        timeline.play();     
+        timeline.play();
 
+        ArrayList<Rectangle> ladrillos = new ArrayList<>();
+        for(int i = 0; i < 50; i++){
+            Rectangle ladrillo =  new Rectangle();
+            ladrillo.setFill(Color.BLACK);
+            ladrillo.setWidth(50);
+            ladrillo.setHeight(30);
+            ladrillo.setTranslateX(new Random().nextInt(500 - 50));
+            ladrillo.setTranslateY(new Random().nextInt(250 - 10));
+            ladrillo.setVisible(true);
+            ladrillos.add(ladrillo);
+            
+        }
+
+        contenedor.getChildren().addAll(ladrillos);
         escena.setOnKeyPressed(event -> {
                 if (event.getCode() == KeyCode.RIGHT && 
                 plataforma.getBoundsInParent().getMaxX() != escena.getWidth()) {
@@ -132,14 +143,14 @@ public class BolaClase extends Application
             });
 
         TimerTask tarea = new TimerTask() {
-            @Override
-            public void run() {
-                tiempoEnSegundos++;
-            }                        
-        };
+                @Override
+                public void run() {
+                    tiempoEnSegundos++;
+                }                        
+            };
         Timer timer = new Timer();
         timer.schedule(tarea, 0, 1000);
-            
+
     }
 
 }
